@@ -10,6 +10,8 @@ public class Cliente {
     private String host;
     private int porta;
     private String nome;
+    private long totalBytesEnviados;
+    private long tempoTotalEnvio;
 
     public Cliente(String host, int porta, String nome) {
         this.host = host;
@@ -32,7 +34,21 @@ public class Cliente {
         saida.println(nome);
 
         while ((linha = teclado.readLine()) != null && !"/exit".equals(linha)) {
+            long inicioEnvio = System.currentTimeMillis();
             saida.println(linha);
+            long fimEnvio = System.currentTimeMillis();
+
+            // Calcula a taxa de transferência em bytes/segundo
+            long tempoEnvio = fimEnvio - inicioEnvio;
+            long bytesEnviados = linha.getBytes().length;
+            totalBytesEnviados += bytesEnviados;
+            tempoTotalEnvio += tempoEnvio;
+            double taxaTransferencia = (double) totalBytesEnviados / tempoTotalEnvio * 1000;
+            int tamanho = linha.getBytes().length;
+            System.out.println("Tamanho da mensagem: " + tamanho + " bytes");
+
+
+            System.out.println("Taxa de transferência: " + taxaTransferencia + " bytes/s");
         }
 
         socket.close();
@@ -72,4 +88,5 @@ public class Cliente {
         Cliente cliente = new Cliente(host, porta, nome);
         cliente.iniciar();
     }
+
 }
